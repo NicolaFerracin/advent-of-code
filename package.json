@@ -17,6 +17,8 @@
   },
   "homepage": "https://github.com/NicolaFerracin/advent-of-code#readme",
   "dependencies": {
+    "lodash": "^4.17.21",
+    "lodash.combinations": "^18.11.1",
     "md5": "^2.3.0"
   }
 }
