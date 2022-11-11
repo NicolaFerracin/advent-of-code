@@ -19,6 +19,7 @@
   "dependencies": {
     "lodash": "^4.17.21",
     "lodash.combinations": "^18.11.1",
+    "lodash.permutations": "^1.0.0",
     "md5": "^2.3.0"
   }
 }
