@@ -1,151 +1,66 @@
 const { getStringArrayInput } = require("./utils");
 
+const compare = (a, b) => {
+  for (let i = 0; i < Math.min(a.length, b.length); i++) {
+    const x = a[i];
+    const y = b[i];
+
+    if (typeof x === "number" && typeof y === "number") {
+      if (x > y) return false;
+      if (x < y) return true;
+    } else {
+      let res = 0;
+      if (typeof x === "number") res = compare([x], y);
+      else if (typeof y === "number") res = compare(x, [y]);
+      else res = compare(x, y);
+
+      if (typeof res === "boolean") return res;
+      if (res > 0) return false;
+      if (res < 0) return true;
+    }
+  }
+
+  if (a.length < b.length) return true;
+  if (a.length > b.length) return false;
+};
+
 const starOne = () => {
-  const paths = getStringArrayInput("day13").map((line) => {
-    const points = line.split(" -> ");
-    return points.map((point) => point.split(",").map((_) => +_));
-  });
-
-  let minY = Infinity;
-  let maxX = -Infinity;
-  let maxY = -Infinity;
-  for (const path of paths) {
-    for (const [y, x] of path) {
-      minY = Math.min(minY, y);
-      maxX = Math.max(maxX, x);
-      maxY = Math.max(maxY, y);
+  const input = getStringArrayInput("day13");
+  const pairs = [];
+  for (let i = -1; i < input.length; i++) {
+    if (i === -1 || !input[i]) {
+      const a = input[++i];
+      const b = input[++i];
+      pairs.push([eval(a), eval(b)]);
     }
   }
 
-  const x = maxX;
-  const y = maxY - minY;
-  const grid = [];
-  for (let a = 0; a <= x; a++) {
-    const row = [];
-    for (let b = 0; b <= y; b++) row.push(" ");
-    grid.push(row);
+  const indices = [];
+  for (let i = 0; i < pairs.length; i++) {
+    const [a, b] = pairs[i];
+    if (compare(a, b)) indices.push(i + 1);
   }
 
-  for (const path of paths) {
-    for (let i = 1; i < path.length; i++) {
-      const [y1, x1] = path[i - 1];
-      const [y2, x2] = path[i];
-
-      if (x1 === x2) {
-        for (let y = Math.min(y1, y2); y <= Math.max(y1, y2); y++)
-          grid[x1][y - minY] = "#";
-      } else {
-        for (let x = Math.min(x1, x2); x <= Math.max(x1, x2); x++)
-          grid[x][y1 - minY] = "#";
-      }
-    }
-  }
-
-  let sands = 0;
-  while (true) {
-    let x = 0;
-    let y = 500 - minY;
-    while (true) {
-      if (grid[x + 1]?.[y] === " ") x += 1; // go down
-      else if (grid[x + 1]?.[y - 1] === " ") {
-        // go down-left
-        x += 1;
-        y -= 1;
-      } else if (grid[x + 1]?.[y + 1] === " ") {
-        // go down-right
-        x += 1;
-        y += 1;
-      } else {
-        if (x + 1 >= grid.length || y - 1 < 0 || y + 1 >= grid[0].length)
-          return sands;
-
-        break;
-      }
-    }
-    sands++;
-    grid[x][y] = ".";
-  }
+  return indices.reduce((sum, i) => (sum += i), 0);
 };
 
 const starTwo = () => {
-  const paths = getStringArrayInput("day13").map((line) => {
-    const points = line.split(" -> ");
-    return points.map((point) => point.split(",").map((_) => +_));
-  });
-
-  let minY = Infinity;
-  let maxX = -Infinity;
-  let maxY = -Infinity;
-  for (const path of paths) {
-    for (const [y, x] of path) {
-      minY = Math.min(minY, y);
-      maxX = Math.max(maxX, x);
-      maxY = Math.max(maxY, y);
+  const input = getStringArrayInput("day13");
+  const packets = [];
+  for (let i = -1; i < input.length; i++) {
+    if (i === -1 || !input[i]) {
+      const a = input[++i];
+      const b = input[++i];
+      packets.push(eval(a), eval(b));
     }
   }
-
-  const x = maxX;
-  const y = maxY - minY;
-  let buffer = 0;
-  let prev = null;
-  // keep increasing the grid buffer until we find a size that gives the same result as the previous size
-  // we know we reached the maximum size and we can return
-  while (true) {
-    buffer++;
-    const grid = [];
-    for (let a = 0; a <= x + 2; a++) {
-      const row = [];
-      for (let b = 0; b <= y + buffer * 2; b++) {
-        row.push(a < x + 2 ? " " : "#");
-      }
-      grid.push(row);
-    }
-
-    for (const path of paths) {
-      for (let i = 1; i < path.length; i++) {
-        const [y1, x1] = path[i - 1];
-        const [y2, x2] = path[i];
-
-        if (x1 === x2) {
-          for (let y = Math.min(y1, y2); y <= Math.max(y1, y2); y++) {
-            grid[x1][y - minY + buffer] = "#";
-          }
-        } else {
-          for (let x = Math.min(x1, x2); x <= Math.max(x1, x2); x++) {
-            grid[x][y1 - minY + buffer] = "#";
-          }
-        }
-      }
-    }
-    const sandY = 500 - minY + buffer;
-    let sands = 0;
-    let shouldBreak = false;
-    while (!shouldBreak) {
-      let x = 0;
-      let y = sandY;
-      while (true) {
-        if (grid[x + 1]?.[y] === " ") x += 1;
-        else if (grid[x + 1]?.[y - 1] === " ") {
-          x += 1;
-          y -= 1;
-        } else if (grid[x + 1]?.[y + 1] === " ") {
-          x += 1;
-          y += 1;
-        } else {
-          if (x === 0 && y === sandY) {
-            if (prev === sands + 1) return prev;
-            prev = sands + 1;
-            shouldBreak = true;
-          }
-
-          break;
-        }
-      }
-      sands++;
-
-      grid[x][y] = ".";
-    }
-  }
+  packets.push([[2]]);
+  packets.push([[6]]);
+  packets.sort((a, b) => (compare(a, b) ? -1 : 1));
+  return (
+    (packets.findIndex((p) => JSON.stringify(p) === "[[2]]") + 1) *
+    (packets.findIndex((p) => JSON.stringify(p) === "[[6]]") + 1)
+  );
 };
 
 console.log(starOne());
