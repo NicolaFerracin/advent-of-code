@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/NicolaFerracin/advent-of-code#readme",
   "dependencies": {
+    "algebra.js": "^0.2.6",
     "lodash": "^4.17.21",
     "lodash.combinations": "^18.11.1",
     "lodash.permutations": "^1.0.0",
