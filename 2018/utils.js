@@ -11,9 +11,15 @@ const getNumberArrayInput = (day) =>
 
 const deepClone = (obj) => JSON.parse(JSON.stringify(obj));
 
+const rangeModulo = (val, min, max) => {
+  const delta = max - min;
+  return (((val - min) % delta) + delta) % delta;
+};
+
 module.exports = {
   getRawInput,
   getStringArrayInput,
   getNumberArrayInput,
   deepClone,
+  rangeModulo,
 };
