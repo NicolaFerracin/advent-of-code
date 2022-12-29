@@ -1,15 +1,21 @@
 const { getStringArrayInput } = require("./utils");
 
-const starOne = () => {
+const play = () => {
+  let maxX = 0;
+  let maxY = 0;
   const clay = getStringArrayInput("day17").map((line) => {
     const matches = line.match(/\d+/g).map((_) => +_);
 
     if (line.startsWith("x")) {
+      maxX = Math.max(maxX, matches[1], matches[2]);
+      maxY = Math.max(maxY, matches[0]);
       return {
         y: matches.shift(),
         x: matches,
       };
     } else {
+      maxX = Math.max(maxX, matches[0]);
+      maxY = Math.max(maxY, matches[1], matches[2]);
       return {
         x: matches.shift(),
         y: matches,
@@ -17,12 +23,6 @@ const starOne = () => {
     }
   });
 
-  const maxX = Math.max(
-    ...clay.map(({ x }) => (Number.isInteger(x) ? x : Math.max(...x)))
-  );
-  const maxY = Math.max(
-    ...clay.map(({ y }) => (Number.isInteger(y) ? y : Math.max(...y)))
-  );
   const map = [];
   for (let x = 0; x <= maxX; x++) {
     const row = [];
@@ -44,19 +44,22 @@ const starOne = () => {
     }
   });
 
-  // remove first lines until we find the first clay spot
+  // remove first line until we find the first clay spot
   while (!map[0].find((cell) => cell === "#")) map.shift();
 
   const wetSpots = new Set();
-  const dfs = (x, y, char = "~") => {
+  const dfs = (x, y, ops = {}) => {
+    let { char = "~", override = false } = ops;
     // skip if the spot is not empty
-    if (map[x][y] !== ".") return true;
+    if (override) {
+      if (map[x][y] !== "~" && map[x][y] !== ".") return true;
+    } else if (map[x][y] !== ".") return true;
 
-    // skip visited path
-    if (wetSpots.has(`${x}#${y}`)) return true;
+    // skip visited path if
+    if (!override && wetSpots.has(`${x}#${y}`)) return true;
     wetSpots.add(`${x}#${y}`);
 
-    // if we reach the bottom, return false to mark the path
+    // if we reach the bottom, return false to mark the path as eventually drying
     if (map[x + 1][y] === "+") {
       map[x][y] = "+";
       return false;
@@ -64,40 +67,52 @@ const starOne = () => {
 
     // try going down
     if (!dfs(x + 1, y)) {
-      // you get false when you are on a path that should stop propagating
+      // you get false when you are on a path will eventually dry out
       // hence mark as + and return
       map[x][y] = "+";
       return false;
     }
 
     // try going right
-    const pathRight = dfs(x, y + 1);
-    if (!pathRight) {
-      // as with the going-down path, we want to mark this cell if the path returns false
-      // but we keep going to check left, in case we are splitting the flow
-      map[x][y] = "+";
-    }
+    const pathRight = dfs(x, y + 1, ops);
+    // as with the going-down path, we want to mark this cell if the path returns false
+    // but we keep going to check left, in case we are splitting the flow
+    if (!pathRight) char = "+";
 
     // try going left
-    const pathLeft = dfs(x, y - 1, pathRight ? char : "+");
+    const pathLeft = dfs(x, y - 1, { char });
     if (!pathLeft) {
-      map[x][y] = "+";
-    }
+      char = "+";
 
-    // if either going right or left fails, the path should stop
-    if (!pathLeft || !pathRight) return false;
+      // if the path left fails, we need to override the previously drawn right path.
+      // Since right comes before left, left is already correct, but right might not be
+      dfs(x, y + 1, { char, override: true });
+    }
 
     map[x][y] = char;
 
-    return true;
+    return pathLeft && pathRight;
   };
 
   dfs(0, 500);
 
-  return wetSpots.size;
+  return { map, wetSpots };
 };
 
-const starTwo = () => {};
+const starOne = () => {
+  return play().wetSpots.size;
+};
+
+const starTwo = () => {
+  return play().map.reduce(
+    (total, row) =>
+      (total += row.reduce(
+        (totalRow, cell) => (totalRow += cell === "~" ? 1 : 0),
+        0
+      )),
+    0
+  );
+};
 
 console.log(starOne());
 console.log(starTwo());
