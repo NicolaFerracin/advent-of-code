@@ -23,6 +23,9 @@ const lcm = (vals) => {
   return vals[0];
 };
 
+const rotateMatrix = (matrix) =>
+  matrix[0].map((_, index) => matrix.map((row) => row[index]).reverse());
+
 module.exports = {
   getRawInput,
   getStringArrayInput,
@@ -30,4 +33,5 @@ module.exports = {
   deepClone,
   lcm,
   gcd,
+  rotateMatrix,
 };
