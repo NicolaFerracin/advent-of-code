@@ -110,6 +110,18 @@ class Day9Computer {
   }
 }
 
+const gcd = (a, b) => (b ? gcd(b, a % b) : a);
+
+const lcm = (vals) => {
+  while (vals.length > 1) {
+    const a = vals.pop();
+    const b = vals.pop();
+    const lcm = Math.abs(a * b) / gcd(a, b);
+    vals.push(lcm);
+  }
+  return vals[0];
+};
+
 module.exports = {
   getRawInput,
   getStringArrayInput,
@@ -117,4 +129,6 @@ module.exports = {
   moveMap,
   manhattanDist,
   Day9Computer,
+  lcm,
+  gcd,
 };
