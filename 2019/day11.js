@@ -1,4 +1,4 @@
-const { getRawInput, Day9Computer } = require("./utils");
+const { getRawInput, IntcodeComputer } = require("./utils");
 
 const getInput = () => getRawInput("day11").split(",").map(BigInt);
 
@@ -6,7 +6,7 @@ const BLACK = 0;
 const WHITE = 1;
 const SEPARATOR = "#";
 
-class Computer extends Day9Computer {
+class Computer extends IntcodeComputer {
   constructor(memory, inputs, currColor) {
     super(memory, inputs);
 

@@ -1,10 +1,10 @@
-const { getRawInput, Day9Computer } = require("./utils");
+const { getRawInput, IntcodeComputer } = require("./utils");
 
 const sleep = async (ms) => await new Promise((r) => setTimeout(r, ms));
 
 const getInput = () => getRawInput("day13").split(",").map(BigInt);
 
-class Computer extends Day9Computer {
+class Computer extends IntcodeComputer {
   constructor(memory, inputs) {
     super(memory, inputs);
   }

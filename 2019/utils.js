@@ -18,7 +18,7 @@ const moveMap = {
 
 const manhattanDist = (a, b) => Math.abs(a[0] - b[0]) + Math.abs(a[1] - b[1]);
 
-class Day9Computer {
+class IntcodeComputer {
   constructor(program, inputs) {
     this.outputs = [];
     this.program = program;
@@ -128,7 +128,7 @@ module.exports = {
   getNumberArrayInput,
   moveMap,
   manhattanDist,
-  Day9Computer,
+  IntcodeComputer,
   lcm,
   gcd,
 };
