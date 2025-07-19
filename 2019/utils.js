@@ -122,6 +122,8 @@ const lcm = (vals) => {
   return vals[0];
 };
 
+const getRandomArrayItem = (arr) => arr[Math.floor(Math.random() * arr.length)];
+
 module.exports = {
   getRawInput,
   getStringArrayInput,
@@ -131,4 +133,5 @@ module.exports = {
   IntcodeComputer,
   lcm,
   gcd,
+  getRandomArrayItem,
 };
