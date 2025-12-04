@@ -14,9 +14,12 @@ const print = (fn) => {
   console.timeEnd(fn.name);
 };
 
+const copy = (v) => JSON.parse(JSON.stringify(v));
+
 module.exports = {
   readInput,
   splitInputByLine,
   wrapValue,
   print,
+  copy,
 };
