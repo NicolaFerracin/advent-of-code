@@ -16,10 +16,13 @@ const print = (fn) => {
 
 const copy = (v) => JSON.parse(JSON.stringify(v));
 
+const reverseStr = (str) => str.split("").reverse().join("");
+
 module.exports = {
   readInput,
   splitInputByLine,
   wrapValue,
   print,
   copy,
+  reverseStr,
 };
