@@ -18,6 +18,8 @@ const copy = (v) => JSON.parse(JSON.stringify(v));
 
 const reverseStr = (str) => str.split("").reverse().join("");
 
+const splitIntoMatrix = (str) => splitInputByLine(str).map((l) => l.split(""));
+
 const straightLineDistance = (a, b) =>
   Math.sqrt(
     Math.pow(a[0] - b[0], 2) +
@@ -32,5 +34,6 @@ module.exports = {
   print,
   copy,
   reverseStr,
+  splitIntoMatrix,
   straightLineDistance,
 };
